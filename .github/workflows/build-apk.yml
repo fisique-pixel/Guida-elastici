@@ -24,7 +24,7 @@ jobs:
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Gradle
+      - name: Gradle 8.10.2
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
@@ -62,7 +62,7 @@ jobs:
 
           cat > gradle.properties <<'EOF'
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          android.useAndroidX=true
+          android.useAndroidX=false
           android.nonTransitiveRClass=true
           EOF
 
@@ -95,8 +95,7 @@ jobs:
                   android:theme="@android:style/Theme.Material.Light.NoActionBar">
                   <activity
                       android:name=".MainActivity"
-                      android:exported="true"
-                      android:screenOrientation="unspecified">
+                      android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN"/>
                           <category android:name="android.intent.category.LAUNCHER"/>
@@ -118,14 +117,13 @@ jobs:
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
-          import androidx.annotation.Nullable;
 
           public class MainActivity extends Activity {
               private WebView webView;
 
               @SuppressLint("SetJavaScriptEnabled")
               @Override
-              protected void onCreate(@Nullable Bundle savedInstanceState) {
+              protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
 
                   webView = new WebView(this);
@@ -160,8 +158,11 @@ jobs:
 
               @Override
               public void onBackPressed() {
-                  if (webView != null && webView.canGoBack()) webView.goBack();
-                  else super.onBackPressed();
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
               }
           }
           EOF
